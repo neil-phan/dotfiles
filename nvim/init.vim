@@ -1,4 +1,4 @@
-" Gotta be first
+"Gotta be first
 set nocompatible
 
 " --- General Settings ---
@@ -8,7 +8,8 @@ set shiftround
 set tabstop=4
 set shiftwidth=4
 set smarttab
-"set mouse=a
+set clipboard=unnamed
+set mouse=a
 
 set backspace=indent,eol,start
 set ruler
@@ -30,6 +31,9 @@ nnoremap <C-j> :tabp<CR>
 nnoremap <C-k> :tabn<CR>
 nnoremap <C-n> :tabnew<CR>
 
+" lol
+noremap ; :
+
 
 " =====[PLUGIN MANAGER STUFF]=======
 " Directory for plugins
@@ -39,9 +43,19 @@ Plug 'zhou13/vim-easyescape'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdtree'
 Plug 'itchyny/lightline.vim'
+Plug 'arcticicestudio/nord-vim'
+Plug 'tpope/vim-surround'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-fugitive'
 Plug 'morhetz/gruvbox'
+Plug 'antiagainst/vim-tablegen'
+
+" JavaScript
+Plug 'pangloss/vim-javascript'
+Plug 'othree/html5.vim'
+
+" Svelte
+Plug 'evanleck/vim-svelte'
 
 " Initialize plugin system
 call plug#end()
@@ -58,9 +72,31 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
-set termguicolors
+" Set lightline
+set laststatus=2
+if !has('gui_running')
+  set t_Co=256
+endif
+
+let g:lightline = {
+    \ 'colorscheme': 'wombat',
+    \ 'component': {
+    \     'cocstatus': '%{coc#status()}',
+    \     'charhexvalue': '0x%B',
+    \     'gitbranch': ' %{fugitive#head()}'
+    \ },
+    \ 'active': {
+    \   'left': [
+    \             ['mode', 'paste'],
+    \             [ 'readonly', 'gitbranch', 'filename', 'modified', 'hexcharstaus']
+    \         ]
+    \     },
+    \ 'component_function': { 'gitbranch': 'FugitiveHead' }
+    \ }
+
 colorscheme gruvbox
-hi Normal guibg=NONE ctermbg=NONE
+set termguicolors
+" hi Normal guibg=NONE ctermbg=NONE
 
 " Start NERDTree and put the cursor back in the other window.
 autocmd VimEnter * NERDTree | wincmd p
