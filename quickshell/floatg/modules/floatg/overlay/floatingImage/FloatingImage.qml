@@ -3,7 +3,6 @@ import QtQuick
 import Qt5Compat.GraphicalEffects
 import qs.modules.common
 import qs.modules.common.functions
-import qs.modules.common.utils
 import qs.modules.floatg.overlay
 
 StyledOverlayWidget {
@@ -14,8 +13,8 @@ StyledOverlayWidget {
 
     property string imageSource: Config.options.overlay.floatingImage.imageSource
     property real scaleFactor: Config.options.overlay.floatingImage.scale
-    property int imageWidth: 0
-    property int imageHeight: 0
+    property int imageWidth: 256
+    property int imageHeight: 256
 
     // Override to always save 0 size
     function savePosition(xPos = root.x, yPos = root.y, width = 0, height = 0) {
@@ -26,10 +25,7 @@ StyledOverlayWidget {
     }
 
     onImageSourceChanged: {
-        imageDownloader.running = false;
-        imageDownloader.sourceUrl = root.imageSource;
-        imageDownloader.filePath = Qt.resolvedUrl(Directories.tempImages + "/" + Qt.md5(root.imageSource))
-        imageDownloader.running = true;
+        animatedImage.source = root.imageSource;
     }
     onScaleFactorChanged: {
         setSize();
@@ -71,25 +67,19 @@ StyledOverlayWidget {
             anchors.centerIn: parent
             width: root.imageWidth * root.scaleFactor
             height: root.imageHeight * root.scaleFactor
-            sourceSize.width: width
-            sourceSize.height: height
 
             playing: visible
             asynchronous: true
-            source: ""
+            source: root.imageSource
 
-            ImageDownloaderProcess {
-                id: imageDownloader
-                filePath: Qt.resolvedUrl(Directories.tempImages + "/" + Qt.md5(root.imageSource))
-                sourceUrl: root.imageSource
-
-                onDone: (path, width, height) => {
-                    root.imageWidth = width;
-                    root.imageHeight = height;
+            onStatusChanged: {
+                if (status === Image.Ready) {
+                    root.imageWidth = implicitWidth;
+                    root.imageHeight = implicitHeight;
                     root.setSize();
-                    animatedImage.source = path;
                 }
             }
         }
+
     }
 }

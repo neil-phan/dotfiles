@@ -57,7 +57,7 @@ Singleton {
         }
     }
 
-	FileView { 
+    FileView { 
         id: themeFileView
         path: Qt.resolvedUrl(root.filePath)
         watchChanges: true
@@ -71,4 +71,5 @@ Singleton {
         }
         onLoadFailed: root.resetFilePathNextTime();
     }
+
 }

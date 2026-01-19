@@ -16,7 +16,7 @@ Singleton {
     id: root
     property string keybindParserPath: FileUtils.trimFileProtocol(`${Directories.scriptPath}/hyprland/get_keybinds.py`)
     property string defaultKeybindConfigPath: FileUtils.trimFileProtocol(`${Directories.config}/hypr/hyprland/keybinds.conf`)
-    property string userKeybindConfigPath: FileUtils.trimFileProtocol(`${Directories.config}/hypr/custom/keybinds.conf`)
+    property string userKeybindConfigPath: ""
     property var defaultKeybinds: {"children": []}
     property var userKeybinds: {"children": []}
     property var keybinds: ({
@@ -55,18 +55,6 @@ Singleton {
 
     Process {
         id: getUserKeybinds
-        running: true
-        command: [root.keybindParserPath, "--path", root.userKeybindConfigPath]
-        
-        stdout: SplitParser {
-            onRead: data => {
-                try {
-                    root.userKeybinds = JSON.parse(data)
-                } catch (e) {
-                    console.error("[CheatsheetKeybinds] Error parsing keybinds:", e)
-                }
-            }
-        }
+        running: false
     }
 }
-

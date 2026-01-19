@@ -1,0 +1,3 @@
+module qs.modules.floatg.sessionScreen
+SessionActionButton 1.0 SessionActionButton.qml
+SessionScreen 1.0 SessionScreen.qml

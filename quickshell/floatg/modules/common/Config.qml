@@ -79,7 +79,7 @@ Singleton {
             id: configOptionsJsonAdapter
 
             property list<string> enabledPanels: [
-                "floatgBar", "floatgBackground", "floatgCheatsheet", "floatgDock", "floatgLock", "floatgMediaControls", "floatgNotificationPopup", "floatgOnScreenDisplay", "floatgOnScreenKeyboard", "floatgOverlay", "floatgOverview", "floatgPolkit", "floatgRegionSelector", "floatgScreenCorners", "floatgSessionScreen", "floatgSidebarLeft", "floatgSidebarRight", "floatgVerticalBar", "floatgWallpaperSelector"
+                "floatgBar", "floatgBackground", "floatgCheatsheet", "floatgDock", "floatgLock", "floatgMediaControls", "floatgNotificationPopup", "floatgOnScreenDisplay", "floatgOnScreenKeyboard", "floatgOverlay", "floatgOverview", "floatgPolkit", "floatgScreenCorners", "floatgSessionScreen", "floatgSidebarLeft", "floatgSidebarRight", "floatgVerticalBar", "floatgWallpaperSelector"
             ]
             property string panelFamily: "floatg"
 
@@ -274,11 +274,6 @@ Singleton {
                 property bool autoKillTrays: false
             }
 
-            property JsonObject crosshair: JsonObject {
-                // Valorant crosshair format. Use https://www.vcrdb.net/builder
-                property string code: "0;P;d;1;0l;10;0o;2;1b;0"
-            }
-
             property JsonObject dock: JsonObject {
                 property bool enable: false
                 property bool monochromeIcons: true
@@ -325,7 +320,7 @@ Singleton {
 
             property JsonObject lock: JsonObject {
                 property bool useHyprlock: false
-                property bool launchOnStartup: false
+                property bool launchOnStartup: true
                 property JsonObject blur: JsonObject {
                     property bool enable: true
                     property real radius: 100
@@ -367,7 +362,7 @@ Singleton {
                 property bool darkenScreen: true
                 property real clickthroughOpacity: 0.8
                 property JsonObject floatingImage: JsonObject {
-                    property string imageSource: ""
+                    property string imageSource: Directories.assetsPath + "/images/frieren.gif"
                     property real scale: 0.5
                 }
             }
@@ -423,7 +418,6 @@ Singleton {
                     property string action: "/"
                     property string app: ">"
                     property string clipboard: ";"
-                    property string emojis: ":"
                     property string math: "="
                     property string shellCommand: "$"
                     property string webSearch: "?"

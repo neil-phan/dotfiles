@@ -280,7 +280,7 @@ Item {
                 buttonIcon: "settings"
                 onClicked: {
                     GlobalStates.sidebarRightOpen = false;
-                    Quickshell.execDetached(["qs", "-p", root.settingsQmlPath]);
+                    Quickshell.execDetached(["/usr/bin/qs", "-p", root.settingsQmlPath]);
                 }
                 StyledToolTip {
                     text: Translation.tr("Settings")

@@ -40,7 +40,7 @@ Singleton {
                     else Quickshell.execDetached(["killall", "mako", "dunst"])
                 }
                 if (openDialog) {
-                    Quickshell.execDetached(["qs", "-p", root.killDialogQmlPath])
+                    Quickshell.execDetached(["/usr/bin/qs", "-p", root.killDialogQmlPath])
                 }
             }
         }

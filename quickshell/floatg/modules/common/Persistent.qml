@@ -70,15 +70,7 @@ Singleton {
             }
 
             property JsonObject overlay: JsonObject {
-                property list<string> open: ["crosshair", "recorder", "volumeMixer", "resources"]
-                property JsonObject crosshair: JsonObject {
-                    property bool pinned: false
-                    property bool clickthrough: true
-                    property real x: 827
-                    property real y: 441
-                    property real width: 250
-                    property real height: 100
-                }
+                property list<string> open: []
                 property JsonObject floatingImage: JsonObject {
                     property bool pinned: false
                     property bool clickthrough: false
@@ -86,14 +78,6 @@ Singleton {
                     property real y: 390
                     property real width: 0
                     property real height: 0
-                }
-                property JsonObject fpsLimiter: JsonObject {
-                    property bool pinned: false
-                    property bool clickthrough: false
-                    property real x: 1570
-                    property real y: 615
-                    property real width: 280
-                    property real height: 80
                 }
                 property JsonObject recorder: JsonObject {
                     property bool pinned: false

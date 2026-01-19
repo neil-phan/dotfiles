@@ -1,3 +1,15 @@
 nvim/lazy-lock.json
 nvim/lazyvim.json
-
+**/.DS_Store
+**/Thumbs.db
+**/*.swp
+**/*.swo
+**/*~
+**/.vscode/
+**/.idea/
+**/.vim/
+**/.nvim/
+**/.cache/
+**/.local/
+**/quickshell/**/states.json
+**/quickshell/**/user/

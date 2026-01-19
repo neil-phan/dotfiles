@@ -26,10 +26,12 @@ MouseArea { // Right side | scroll to change volume
     }
 
     onWheel: event => {
-        if (event.angleDelta.y < 0)
-            root.scrollDown(event.angleDelta.y);
-        else if (event.angleDelta.y > 0)
-            root.scrollUp(event.angleDelta.y);
+        const deltaY = event.angleDelta.y !== 0 ? event.angleDelta.y : event.pixelDelta.y;
+        if (deltaY < 0)
+            root.scrollDown(deltaY);
+        else if (deltaY > 0)
+            root.scrollUp(deltaY);
+        event.accepted = true;
         // Store the mouse position and start tracking
         root.lastScrollX = event.x;
         root.lastScrollY = event.y;

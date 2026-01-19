@@ -102,15 +102,6 @@ ContentPage {
                         Config.options.search.prefix.clipboard = text;
                     }
                 }
-                MaterialTextArea {
-                    Layout.fillWidth: true
-                    placeholderText: Translation.tr("Emojis")
-                    text: Config.options.search.prefix.emojis
-                    wrapMode: TextEdit.Wrap
-                    onTextChanged: {
-                        Config.options.search.prefix.emojis = text;
-                    }
-                }
             }
 
             ConfigRow {
