@@ -21,6 +21,7 @@ jq
 kitty
 man-db
 matugen
+openssh
 pipewire-pulse
 playerctl
 slurp
