@@ -21,7 +21,6 @@ import qs.modules.floatg.polkit
 import qs.modules.floatg.regionSelector
 import qs.modules.floatg.screenCorners
 import qs.modules.floatg.sessionScreen
-import qs.modules.floatg.sidebarLeft
 import qs.modules.floatg.sidebarRight
 import qs.modules.floatg.overlay
 import qs.modules.floatg.verticalBar
@@ -65,7 +64,6 @@ ShellRoot {
     PanelLoader { identifier: "floatgRegionSelector"; component: RegionSelector {} }
     PanelLoader { identifier: "floatgScreenCorners"; component: ScreenCorners {} }
     PanelLoader { identifier: "floatgSessionScreen"; component: SessionScreen {} }
-    PanelLoader { identifier: "floatgSidebarLeft"; component: SidebarLeft {} }
     PanelLoader { identifier: "floatgSidebarRight"; component: SidebarRight {} }
     PanelLoader { identifier: "floatgVerticalBar"; extraCondition: Config.options.bar.vertical; component: VerticalBar {} }
     PanelLoader { identifier: "floatgWallpaperSelector"; component: WallpaperSelector {} }

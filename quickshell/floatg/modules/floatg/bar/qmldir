@@ -9,7 +9,6 @@ CircleUtilButton 1.0 CircleUtilButton.qml
 ClockWidget 1.0 ClockWidget.qml
 ClockWidgetPopup 1.0 ClockWidgetPopup.qml
 HyprlandXkbIndicator 1.0 HyprlandXkbIndicator.qml
-LeftSidebarButton 1.0 LeftSidebarButton.qml
 Media 1.0 Media.qml
 NotificationUnreadCount 1.0 NotificationUnreadCount.qml
 Resource 1.0 Resource.qml

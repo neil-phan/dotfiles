@@ -10,9 +10,7 @@ pragma ComponentBehavior: Bound
 Singleton {
     id: root
     property bool barOpen: true
-    property bool sidebarLeftOpen: false
     property bool sidebarRightOpen: false
-    property string sidebarLeftNotes: ""
     property bool mediaControlsOpen: false
     property bool osdBrightnessOpen: false
     property bool osdVolumeOpen: false
