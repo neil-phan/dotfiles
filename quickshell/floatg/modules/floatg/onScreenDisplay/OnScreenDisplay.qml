@@ -14,6 +14,8 @@ Scope {
     id: root
     property string protectionMessage: ""
     property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+    property int osdThrottleMs: 400
+    property double lastOsdTriggeredAt: 0
 
     property string currentIndicator: "volume"
     property var indicators: [
@@ -28,6 +30,11 @@ Scope {
     ]
 
     function triggerOsd() {
+        const now = Date.now();
+        if (now - root.lastOsdTriggeredAt < root.osdThrottleMs) {
+            return;
+        }
+        root.lastOsdTriggeredAt = now;
         GlobalStates.osdVolumeOpen = true;
         osdTimeout.restart();
     }
