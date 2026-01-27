@@ -13,6 +13,7 @@ fontconfig
 greetd
 grim
 hyprland
+hypridle
 hyprlock
 hyprpicker
 hyprsunset
@@ -21,9 +22,12 @@ jq
 kitty
 man-db
 matugen
+networkmanager
 openssh
 pipewire-pulse
+plasma-nm
 playerctl
+polkit-kde-agent
 slurp
 starship
 stow
