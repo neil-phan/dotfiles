@@ -1,0 +1,40 @@
+# Ghostty config - colors from matugen
+
+# Font (match kitty)
+font-family = JetBrains Mono Nerd Font
+font-size = 12
+font-thicken = false
+window-inherit-font-size = false
+
+# Window
+background-opacity = 0.97
+window-padding-x = 22
+window-padding-y = 22
+
+# Shell
+command = fish
+
+# Colors from matugen palette
+background = #18120c
+foreground = #eee0d5
+cursor-color = #faba73
+selection-background = #50453a
+selection-foreground = #eee0d5
+
+# ANSI colors (derived from matugen palette)
+palette = 0=#130d07
+palette = 1=#ffb4ab
+palette = 2=#bdcd9c
+palette = 3=#faba73
+palette = 4=#7eb0d4
+palette = 5=#e0c1a3
+palette = 6=#7ec4b8
+palette = 7=#eee0d5
+palette = 8=#3b332c
+palette = 9=#ffdad6
+palette = 10=#d9e9b6
+palette = 11=#ffddbb
+palette = 12=#a8d0f0
+palette = 13=#fdddbd
+palette = 14=#a8e0d6
+palette = 15=#ffffff

@@ -16,4 +16,20 @@ return {
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		},
 	},
+	{
+		"nvim-lualine/lualine.nvim",
+		opts = function(_, opts)
+			-- Make lualine background transparent
+			local transparent = { bg = "NONE" }
+			opts.options = opts.options or {}
+			opts.options.theme = {
+				normal = { a = transparent, b = transparent, c = transparent },
+				insert = { a = transparent, b = transparent, c = transparent },
+				visual = { a = transparent, b = transparent, c = transparent },
+				replace = { a = transparent, b = transparent, c = transparent },
+				command = { a = transparent, b = transparent, c = transparent },
+				inactive = { a = transparent, b = transparent, c = transparent },
+			}
+		end,
+	},
 }
