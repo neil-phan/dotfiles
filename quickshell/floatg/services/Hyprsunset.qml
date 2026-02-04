@@ -136,4 +136,15 @@ Singleton {
             Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", `${Config.options.light.night.colorTemperature}`]);
         }
     }
+
+    // Refresh on DPMS wake - reapply color temperature since display driver resets gamma
+    IpcHandler {
+        target: "hyprsunset"
+
+        function refresh() {
+            if (root.active) {
+                Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", `${root.colorTemperature}`]);
+            }
+        }
+    }
 }
