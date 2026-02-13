@@ -73,8 +73,29 @@ if conf_path.exists():
     if updated:
         conf_path.write_text("\n".join(out) + "\n")
 
+# Swap toolkit scaling env vars so they don't compound with compositor scale
+if new_scale == scale_b:
+    # Going to 1.5x compositor — toolkit should be 1x
+    qt_scale, cursor_size = "1", "24"
+else:
+    # Going to 1.0x compositor — toolkit should be 1.5x
+    qt_scale, cursor_size = "1.5", "36"
+
+for var, val in [("QT_SCALE_FACTOR", qt_scale), ("XCURSOR_SIZE", cursor_size)]:
+    subprocess.run(["hyprctl", "keyword", "env", f"{var},{val}"])
+
+subprocess.run(["hyprctl", "setcursor", "Bibata-Modern-Classic", cursor_size])
+
 try:
     subprocess.run(["notify-send", "Hyprland", f"{monitor} scale set to {new_scale}"])
 except Exception:
     pass
 PY
+
+# Restart Quickshell to pick up new QT_SCALE_FACTOR
+qsConfig="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/floatg/shell.qml"
+if command -v qs &>/dev/null && [[ -f "$qsConfig" ]]; then
+    pkill -f "qs.*$qsConfig" 2>/dev/null || true
+    qs -c "$qsConfig" &
+    disown
+fi

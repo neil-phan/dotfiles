@@ -18,6 +18,7 @@ done
 
 stow --restow -t "${HOME}" tmux
 stow --restow -t "${HOME}" starship
+stow --restow -t "${HOME}" claude
 
 fg_dir="${HOME}/.config/floating-garden"
 fg_template="${PWD}/floating-garden/config.json"

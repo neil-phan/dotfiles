@@ -2,14 +2,14 @@
 
 # Font (match kitty)
 font-family = JetBrains Mono Nerd Font
-font-size = 12
+font-size = 18
 font-thicken = false
 window-inherit-font-size = false
 
 # Window
 background-opacity = 0.97
-window-padding-x = 22
-window-padding-y = 22
+window-padding-x = 33
+window-padding-y = 33
 
 # Shell
 command = fish

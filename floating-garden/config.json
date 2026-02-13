@@ -257,7 +257,7 @@
             "unlockKeyring": true
         },
         "showLockedText": true,
-        "useHyprlock": false
+        "useHyprlock": true
     },
     "media": {
         "filterDuplicatePlayers": true

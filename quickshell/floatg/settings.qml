@@ -4,7 +4,7 @@
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
 
 // Adjust this to make the app smaller or larger
-//@ pragma Env QT_SCALE_FACTOR=1
+//@ pragma Env QT_SCALE_FACTOR=1.5
 
 import QtQuick
 import QtQuick.Controls
