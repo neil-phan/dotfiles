@@ -407,7 +407,7 @@
         "pomodoro": {
             "breakTime": 300,
             "cyclesBeforeLongBreak": 4,
-            "focus": 1500,
+            "focus": 3300,
             "longBreak": 900
         },
         "secondPrecision": false,

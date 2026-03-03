@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.modules.common
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 
 /**
@@ -77,6 +78,27 @@ Singleton {
 
     function setDefaultSource(node) {
         Pipewire.preferredDefaultAudioSource = node;
+    }
+
+    function cycleSink() {
+        const devs = root.outputDevices;
+        if (devs.length === 0) return;
+        const currentIndex = devs.indexOf(root.sink);
+        const nextIndex = (currentIndex + 1) % devs.length;
+        const next = devs[nextIndex];
+        root.setDefaultSink(next);
+        const name = root.friendlyDeviceName(next);
+        Quickshell.execDetached(["notify-send", "Audio output", name, "-a", "Audio", "-t", "3000"]);
+    }
+
+    // External trigger points
+
+    IpcHandler {
+        target: "audio"
+
+        function cycleSink() {
+            root.cycleSink()
+        }
     }
 
     // Internals

@@ -4,12 +4,10 @@ import QtQuick
 import qs.modules.common
 import Quickshell
 import Quickshell.Io
-import Quickshell.Hyprland
 
 /**
- * Simple hyprsunset service with automatic mode.
- * In theory we don't need this because hyprsunset has a config file, but it somehow doesn't work.
- * It should also be possible to control it via hyprctl, but it doesn't work consistently either so we're just killing and launching.
+ * Hyprsunset nightlight service with automatic scheduling and manual toggle.
+ * Controls the hyprsunset daemon via hyprctl commands (daemon started at boot with --identity).
  */
 Singleton {
     id: root
@@ -59,15 +57,12 @@ Singleton {
             root.manualActive = undefined;
         }
         root.shouldBeOn = inBetween(t, from, to);
-        if (firstEvaluation) {
-            firstEvaluation = false;
-            root.ensureState();
-        }
+        firstEvaluation = false;
+        root.ensureState();
     }
 
     onShouldBeOnChanged: ensureState()
     function ensureState() {
-        // console.log("[Hyprsunset] Ensuring state:", root.shouldBeOn, "Automatic mode:", root.automatic);
         if (!root.automatic || root.manualActive !== undefined)
             return;
         if (root.shouldBeOn) {
@@ -81,14 +76,12 @@ Singleton {
 
     function enable() {
         root.active = true;
-        // console.log("[Hyprsunset] Enabling");
-        Quickshell.execDetached(["bash", "-c", `pidof hyprsunset || hyprsunset --temperature ${root.colorTemperature}`]);
+        Quickshell.execDetached(["bash", "-c", `hyprctl hyprsunset temperature ${root.colorTemperature} || hyprsunset --temperature ${root.colorTemperature}`]);
     }
 
     function disable() {
         root.active = false;
-        // console.log("[Hyprsunset] Disabling");
-        Quickshell.execDetached(["bash", "-c", `pkill hyprsunset`]);
+        Quickshell.execDetached(["hyprctl", "hyprsunset", "identity"]);
     }
 
     function fetchState() {
@@ -106,8 +99,7 @@ Singleton {
                 if (output.length == 0 || output.startsWith("Couldn't"))
                     root.active = false;
                 else
-                    root.active = (output != "6500"); // 6500 is the default when off
-                // console.log("[Hyprsunset] Fetched state:", output, "->", root.active);
+                    root.active = (output != "6500");
             }
         }
     }
@@ -127,24 +119,39 @@ Singleton {
         }
     }
 
-    // Change temp
     Connections {
         target: Config.options.light.night
         function onColorTemperatureChanged() {
             if (!root.active) return;
-            Hyprland.dispatch(`hyprctl hyprsunset temperature ${Config.options.light.night.colorTemperature}`);
             Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", `${Config.options.light.night.colorTemperature}`]);
         }
     }
 
-    // Refresh on DPMS wake - reapply color temperature since display driver resets gamma
+    function reapplyTemperature() {
+        const shouldApply = root.manualActive !== undefined ? root.manualActive :
+                            root.automatic ? root.shouldBeOn : root.active;
+        if (shouldApply) {
+            root.active = true;
+            Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", `${root.colorTemperature}`]);
+        }
+    }
+
+    Timer {
+        id: refreshTimer
+        interval: 500
+        onTriggered: root.reapplyTemperature()
+    }
+
+    // Refresh on DPMS wake / unlock - reapply color temperature since display driver resets gamma
     IpcHandler {
         target: "hyprsunset"
+        function refresh() { refreshTimer.restart(); }
+    }
 
-        function refresh() {
-            if (root.active) {
-                Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", `${root.colorTemperature}`]);
-            }
+    Connections {
+        target: GlobalStates
+        function onScreenLockedChanged() {
+            if (!GlobalStates.screenLocked) refreshTimer.restart();
         }
     }
 }

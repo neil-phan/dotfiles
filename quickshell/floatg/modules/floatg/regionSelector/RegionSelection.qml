@@ -59,7 +59,7 @@ PanelWindow {
     readonly property real falsePositivePreventionRatio: 0.5
 
     readonly property HyprlandMonitor hyprlandMonitor: Hyprland.monitorFor(screen)
-    readonly property real monitorScale: hyprlandMonitor.scale
+    readonly property real monitorScale: Screen.devicePixelRatio
     readonly property real monitorOffsetX: hyprlandMonitor.x
     readonly property real monitorOffsetY: hyprlandMonitor.y
     property int activeWorkspaceId: hyprlandMonitor.activeWorkspace?.id ?? 0
