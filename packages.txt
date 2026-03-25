@@ -19,7 +19,7 @@ hyprpicker
 hyprsunset
 imagemagick
 jq
-kitty
+ghostty
 man-db
 matugen
 networkmanager

@@ -9,7 +9,7 @@ if ! command -v stow &> /dev/null; then
     exit 1
 fi
 
-config_pkgs=(nvim fish fuzzel hypr quickshell environment.d xdg-desktop-portal fontconfig kitty ghostty)
+config_pkgs=(nvim fish fuzzel hypr quickshell environment.d xdg-desktop-portal fontconfig ghostty)
 
 for pkg in "${config_pkgs[@]}"; do
     mkdir -p "${HOME}/.config/${pkg}"

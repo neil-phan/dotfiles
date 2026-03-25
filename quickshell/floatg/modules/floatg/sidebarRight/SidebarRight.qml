@@ -41,6 +41,25 @@ Scope {
             }
         }
 
+        MouseArea {
+            id: barRegionScrollCapture
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+            }
+            height: Appearance.sizes.barHeight
+            acceptedButtons: Qt.NoButton
+            propagateComposedEvents: true
+
+            onWheel: event => {
+                const deltaY = event.angleDelta.y !== 0 ? event.angleDelta.y : event.pixelDelta.y;
+                if (deltaY > 0) Audio.incrementVolume();
+                else if (deltaY < 0) Audio.decrementVolume();
+                event.accepted = true;
+            }
+        }
+
         Loader {
             id: sidebarContentLoader
             active: GlobalStates.sidebarRightOpen || Config?.options.sidebar.keepRightSidebarLoaded

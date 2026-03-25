@@ -1,6 +1,6 @@
 # Ghostty config - colors from matugen
 
-# Font (match kitty)
+# Font
 font-family = JetBrains Mono Nerd Font
 font-size = 18
 font-thicken = false
