@@ -98,6 +98,9 @@ Singleton {
                     property real maxAllowedIncrease: 10
                     property real maxAllowed: 99
                 }
+                property JsonObject cycleSink: JsonObject {
+                    property list<string> allowedFriendlyNames: []
+                }
             }
 
             property JsonObject apps: JsonObject {

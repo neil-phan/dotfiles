@@ -44,6 +44,9 @@
         "volumeMixer": "~/.config/hypr/hyprland/scripts/launch_first_available.sh \"pavucontrol-qt\" \"pavucontrol\""
     },
     "audio": {
+        "cycleSink": {
+            "allowedFriendlyNames": []
+        },
         "protection": {
             "enable": false,
             "maxAllowed": 99,

@@ -26,6 +26,22 @@ Singleton {
     function appNodeDisplayName(node) {
         return (node.properties["application.name"] || node.description || node.name)
     }
+    function normalizeName(name) {
+        return String(name ?? "").trim().toLowerCase();
+    }
+    function configuredCycleSinkNames() {
+        return Config.options.audio.cycleSink.allowedFriendlyNames
+            .map(name => root.normalizeName(name))
+            .filter(name => name.length > 0);
+    }
+    function cycleSinkDevices() {
+        const allowedNames = root.configuredCycleSinkNames();
+        if (allowedNames.length === 0) return root.outputDevices;
+
+        return root.outputDevices.filter(node => {
+            return allowedNames.indexOf(root.normalizeName(root.friendlyDeviceName(node))) !== -1;
+        });
+    }
 
     // Lists
     function correctType(node, isSink) {
@@ -81,10 +97,24 @@ Singleton {
     }
 
     function cycleSink() {
-        const devs = root.outputDevices;
+        const allowedNames = root.configuredCycleSinkNames();
+        const devs = root.cycleSinkDevices();
+        if (allowedNames.length > 0 && devs.length === 0) {
+            Quickshell.execDetached([
+                "notify-send",
+                "Audio output",
+                "No configured outputs are currently available",
+                "-a",
+                "Audio",
+                "-t",
+                "3000"
+            ]);
+            return;
+        }
         if (devs.length === 0) return;
-        const currentIndex = devs.indexOf(root.sink);
-        const nextIndex = (currentIndex + 1) % devs.length;
+
+        const currentIndex = devs.findIndex(node => node.id === root.sink?.id);
+        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % devs.length;
         const next = devs[nextIndex];
         root.setDefaultSink(next);
         const name = root.friendlyDeviceName(next);
