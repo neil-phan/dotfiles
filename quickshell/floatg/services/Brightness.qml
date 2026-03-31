@@ -46,6 +46,7 @@ Singleton {
     onMonitorsChanged: {
         ddcMonitors = [];
         ddcProc.running = true;
+        initializeMonitor(0);
     }
 
     function initializeMonitor(i: int): void {
@@ -55,7 +56,8 @@ Singleton {
     }
 
     function ddcDetectFinished(): void {
-        initializeMonitor(0);
+        if (ddcMonitors.length > 0)
+            initializeMonitor(0);
     }
 
     Process {
@@ -160,6 +162,7 @@ Singleton {
         }
 
         function setBrightness(value: real): void {
+            if (!monitor.ready) return;
             value = Math.max(0, Math.min(1, value));
             monitor.brightness = value;
         }
