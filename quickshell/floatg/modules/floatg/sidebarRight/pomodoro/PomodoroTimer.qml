@@ -70,6 +70,95 @@ Item {
             }
         }
 
+        // Time adjustment controls
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 6
+            visible: !TimerService.pomodoroRunning
+
+            StyledText {
+                text: Translation.tr("Focus")
+                color: Appearance.colors.colSubtext
+                font.pixelSize: Appearance.font.pixelSize.small
+            }
+            RippleButton {
+                implicitHeight: 28
+                implicitWidth: 28
+                font.pixelSize: Appearance.font.pixelSize.small
+                colBackground: Appearance.colors.colLayer2
+                colBackgroundHover: Appearance.colors.colLayer2Hover
+                colRipple: Appearance.colors.colLayer2Active
+                onClicked: TimerService.adjustFocusTime(-300)
+                contentItem: StyledText {
+                    anchors.centerIn: parent
+                    text: "−"
+                    color: Appearance.colors.colOnLayer2
+                }
+            }
+            StyledText {
+                text: Math.floor(TimerService.focusTime / 60) + "m"
+                font.pixelSize: Appearance.font.pixelSize.small
+                color: Appearance.m3colors.m3onSurface
+                horizontalAlignment: Text.AlignHCenter
+            }
+            RippleButton {
+                implicitHeight: 28
+                implicitWidth: 28
+                font.pixelSize: Appearance.font.pixelSize.small
+                colBackground: Appearance.colors.colLayer2
+                colBackgroundHover: Appearance.colors.colLayer2Hover
+                colRipple: Appearance.colors.colLayer2Active
+                onClicked: TimerService.adjustFocusTime(300)
+                contentItem: StyledText {
+                    anchors.centerIn: parent
+                    text: "+"
+                    color: Appearance.colors.colOnLayer2
+                }
+            }
+
+            Item { implicitWidth: 8 }
+
+            StyledText {
+                text: Translation.tr("Break")
+                color: Appearance.colors.colSubtext
+                font.pixelSize: Appearance.font.pixelSize.small
+            }
+            RippleButton {
+                implicitHeight: 28
+                implicitWidth: 28
+                font.pixelSize: Appearance.font.pixelSize.small
+                colBackground: Appearance.colors.colLayer2
+                colBackgroundHover: Appearance.colors.colLayer2Hover
+                colRipple: Appearance.colors.colLayer2Active
+                onClicked: TimerService.adjustBreakTime(-300)
+                contentItem: StyledText {
+                    anchors.centerIn: parent
+                    text: "−"
+                    color: Appearance.colors.colOnLayer2
+                }
+            }
+            StyledText {
+                text: Math.floor(TimerService.breakTime / 60) + "m"
+                font.pixelSize: Appearance.font.pixelSize.small
+                color: Appearance.m3colors.m3onSurface
+                horizontalAlignment: Text.AlignHCenter
+            }
+            RippleButton {
+                implicitHeight: 28
+                implicitWidth: 28
+                font.pixelSize: Appearance.font.pixelSize.small
+                colBackground: Appearance.colors.colLayer2
+                colBackgroundHover: Appearance.colors.colLayer2Hover
+                colRipple: Appearance.colors.colLayer2Active
+                onClicked: TimerService.adjustBreakTime(300)
+                contentItem: StyledText {
+                    anchors.centerIn: parent
+                    text: "+"
+                    color: Appearance.colors.colOnLayer2
+                }
+            }
+        }
+
         // The Start/Stop and Reset buttons
         RowLayout {
             Layout.alignment: Qt.AlignHCenter

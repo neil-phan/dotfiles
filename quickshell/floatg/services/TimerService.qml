@@ -14,8 +14,8 @@ import QtQuick
 Singleton {
     id: root
 
-    property int focusTime: Config.options.time.pomodoro.focus
-    property int breakTime: Config.options.time.pomodoro.breakTime
+    property int focusTime: Persistent.states.timer.pomodoro.customFocus || Config.options.time.pomodoro.focus
+    property int breakTime: Persistent.states.timer.pomodoro.customBreak || Config.options.time.pomodoro.breakTime
     property int longBreakTime: Config.options.time.pomodoro.longBreak
     property int cyclesBeforeLongBreak: Config.options.time.pomodoro.cyclesBeforeLongBreak
 
@@ -49,15 +49,19 @@ Singleton {
     function refreshPomodoro() {
         // Work <-> break ?
         if (getCurrentTimeInSeconds() >= Persistent.states.timer.pomodoro.start + pomodoroLapDuration) {
-            // Reset counts
             Persistent.states.timer.pomodoro.isBreak = !Persistent.states.timer.pomodoro.isBreak;
             Persistent.states.timer.pomodoro.start = getCurrentTimeInSeconds();
 
-            // Send notification
+            // Read new state directly — bound props (pomodoroBreak, pomodoroLapDuration)
+            // haven't updated yet within the same JS call due to JsonObject deferred notifications
+            let isBreakNow = Persistent.states.timer.pomodoro.isBreak;
+            let newLapDuration = (isBreakNow && (pomodoroCycle + 1 == cyclesBeforeLongBreak))
+                ? longBreakTime : isBreakNow ? breakTime : focusTime;
+
             let notificationMessage;
-            if (Persistent.states.timer.pomodoro.isBreak && (pomodoroCycle + 1 == cyclesBeforeLongBreak)) {
+            if (isBreakNow && (pomodoroCycle + 1 == cyclesBeforeLongBreak)) {
                 notificationMessage = Translation.tr(`🌿 Long break: %1 minutes`).arg(Math.floor(longBreakTime / 60));
-            } else if (Persistent.states.timer.pomodoro.isBreak) {
+            } else if (isBreakNow) {
                 notificationMessage = Translation.tr(`☕ Break: %1 minutes`).arg(Math.floor(breakTime / 60));
             } else {
                 notificationMessage = Translation.tr(`🔴 Focus: %1 minutes`).arg(Math.floor(focusTime / 60));
@@ -68,9 +72,13 @@ Singleton {
                 Audio.playSystemSound("alarm-clock-elapsed")
             }
 
-            if (!pomodoroBreak) {
+            // Only increment cycle on break→focus transition
+            if (!isBreakNow) {
                 Persistent.states.timer.pomodoro.cycle = (Persistent.states.timer.pomodoro.cycle + 1) % root.cyclesBeforeLongBreak;
             }
+
+            pomodoroSecondsLeft = newLapDuration; // start just reset, so elapsed = 0
+            return;
         }
 
         pomodoroSecondsLeft = pomodoroLapDuration - (getCurrentTimeInSeconds() - Persistent.states.timer.pomodoro.start);
@@ -98,6 +106,14 @@ Singleton {
         Persistent.states.timer.pomodoro.start = getCurrentTimeInSeconds();
         Persistent.states.timer.pomodoro.cycle = 0;
         refreshPomodoro();
+    }
+
+    function adjustFocusTime(delta) {
+        Persistent.states.timer.pomodoro.customFocus = Math.max(300, focusTime + delta);
+    }
+
+    function adjustBreakTime(delta) {
+        Persistent.states.timer.pomodoro.customBreak = Math.max(300, breakTime + delta);
     }
 
     // Stopwatch
