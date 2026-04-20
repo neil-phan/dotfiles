@@ -13,14 +13,17 @@ config_pkgs=(nvim fish fuzzel hypr quickshell environment.d xdg-desktop-portal f
 
 for pkg in "${config_pkgs[@]}"; do
     mkdir -p "${HOME}/.config/${pkg}"
+    # Pre-create subdirs that need file-level (not directory-level) symlinks
+    [[ "${pkg}" == "hypr" ]] && mkdir -p "${HOME}/.config/hypr/hyprlock"
     stow --restow -t "${HOME}/.config/${pkg}" "${pkg}"
 done
 
 stow --restow -t "${HOME}" tmux
 stow --restow -t "${HOME}" starship
 
-mkdir -p "${HOME}/.config/hypr/hyprlock"
-sed "s|__HOME__|${HOME}|g" "${PWD}/hypr/hyprlock/colors.conf" > "${HOME}/.config/hypr/hyprlock/colors.conf"
+colors_dst="${HOME}/.config/hypr/hyprlock/colors.conf"
+[[ -L "${colors_dst}" ]] && unlink "${colors_dst}"
+sed "s|__HOME__|${HOME}|g" "${PWD}/hypr/hyprlock/colors.conf" > "${colors_dst}"
 
 fg_dir="${HOME}/.config/floating-garden"
 fg_template="${PWD}/floating-garden/config.json"
