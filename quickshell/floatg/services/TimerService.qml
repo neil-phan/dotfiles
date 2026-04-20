@@ -26,6 +26,13 @@ Singleton {
     property int pomodoroSecondsLeft: pomodoroLapDuration // Reasonable init value, to be changed
     property int pomodoroCycle: Persistent.states.timer.pomodoro.cycle
 
+    onPomodoroLapDurationChanged: {
+        if (!pomodoroRunning) {
+            pomodoroSecondsLeft = pomodoroLapDuration;
+            Persistent.states.timer.pomodoro.start = getCurrentTimeInSeconds();
+        }
+    }
+
     property bool stopwatchRunning: Persistent.states.timer.stopwatch.running
     property int stopwatchTime: 0
     property int stopwatchStart: Persistent.states.timer.stopwatch.start
