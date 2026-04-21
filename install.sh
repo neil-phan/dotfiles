@@ -14,7 +14,12 @@ config_pkgs=(nvim fish fuzzel hypr quickshell environment.d xdg-desktop-portal f
 for pkg in "${config_pkgs[@]}"; do
     mkdir -p "${HOME}/.config/${pkg}"
     # Pre-create subdirs that need file-level (not directory-level) symlinks
-    [[ "${pkg}" == "hypr" ]] && mkdir -p "${HOME}/.config/hypr/hyprlock"
+    if [[ "${pkg}" == "hypr" ]]; then
+        for subdir in hyprlock hyprland; do
+            [[ -L "${HOME}/.config/hypr/${subdir}" ]] && unlink "${HOME}/.config/hypr/${subdir}"
+            mkdir -p "${HOME}/.config/hypr/${subdir}"
+        done
+    fi
     stow --restow -t "${HOME}/.config/${pkg}" "${pkg}"
 done
 
@@ -24,6 +29,25 @@ stow --restow -t "${HOME}" starship
 colors_dst="${HOME}/.config/hypr/hyprlock/colors.conf"
 [[ -L "${colors_dst}" ]] && unlink "${colors_dst}"
 sed "s|__HOME__|${HOME}|g" "${PWD}/hypr/hyprlock/colors.conf" > "${colors_dst}"
+
+gpu_dst="${HOME}/.config/hypr/hyprland/gpu.conf"
+if grep -qi nvidia <<< "$(lspci)"; then
+    cat > "${gpu_dst}" <<'EOF'
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+env = LIBVA_DRIVER_NAME,nvidia
+env = NVD_BACKEND,direct
+EOF
+else
+    : > "${gpu_dst}"
+fi
+
+scale_dst="${HOME}/.config/hypr/hyprland/scale.conf"
+[[ -L "${scale_dst}" ]] && unlink "${scale_dst}"
+if [[ -f "${PWD}/templates/scale.conf.local" ]]; then
+    cp "${PWD}/templates/scale.conf.local" "${scale_dst}"
+else
+    cp "${PWD}/hypr/hyprland/scale.conf" "${scale_dst}"
+fi
 
 fg_dir="${HOME}/.config/floating-garden"
 fg_template="${PWD}/floating-garden/config.json"
