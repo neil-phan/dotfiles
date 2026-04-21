@@ -2,8 +2,8 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-config_pkgs=(nvim fish fuzzel hypr quickshell environment.d xdg-desktop-portal fontconfig floating-garden ghostty wireplumber)
-home_pkgs=(tmux)
+config_pkgs=(nvim fish fuzzel hypr quickshell environment.d xdg-desktop-portal fontconfig ghostty)
+home_pkgs=(tmux starship)
 
 echo "Checking stow targets..."
 
