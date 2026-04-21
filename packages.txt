@@ -48,7 +48,15 @@ xdg-user-dirs
 ydotool
 ttf-jetbrains-mono-nerd
 noto-fonts-cjk
+quickshell
+brightnessctl
+cliphist
+easyeffects
+gnome-keyring
+xorg-xrdb
 
 # AUR packages
 ttf-material-symbols-variable-git
-quickshell-git
+ttf-google-sans
+ttf-readex-pro
+otf-space-grotesk
