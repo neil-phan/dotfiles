@@ -28,6 +28,7 @@ pipewire-pulse
 plasma-nm
 playerctl
 polkit-kde-agent
+power-profiles-daemon
 slurp
 starship
 stow
