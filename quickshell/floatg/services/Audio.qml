@@ -35,11 +35,12 @@ Singleton {
             .filter(name => name.length > 0);
     }
     function cycleSinkDevices() {
-        const allowedNames = root.configuredCycleSinkNames();
-        if (allowedNames.length === 0) return root.outputDevices;
+        const allowedPatterns = root.configuredCycleSinkNames();
+        if (allowedPatterns.length === 0) return root.outputDevices;
 
         return root.outputDevices.filter(node => {
-            return allowedNames.indexOf(root.normalizeName(root.friendlyDeviceName(node))) !== -1;
+            const name = root.normalizeName(root.friendlyDeviceName(node));
+            return allowedPatterns.some(pattern => new RegExp(pattern).test(name));
         });
     }
 
