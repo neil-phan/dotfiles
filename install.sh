@@ -26,6 +26,12 @@ done
 stow --restow -t "${HOME}" tmux
 stow --restow -t "${HOME}" starship
 
+# Claude Code skills/agents/commands — pre-create real dirs so stow makes
+# per-item symlinks (not a single folded dir symlink), letting repo-managed
+# and local items coexist.
+mkdir -p "${HOME}/.claude/skills" "${HOME}/.claude/agents" "${HOME}/.claude/commands"
+stow --restow -t "${HOME}" claude
+
 colors_dst="${HOME}/.config/hypr/hyprlock/colors.conf"
 [[ -L "${colors_dst}" ]] && unlink "${colors_dst}"
 sed "s|__HOME__|${HOME}|g" "${PWD}/hypr/hyprlock/colors.conf" > "${colors_dst}"
