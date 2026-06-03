@@ -6,10 +6,6 @@ add_newline = false
 # Random noise 🬖🬥🬔🬗
 # Cool stuff 󰜥   
 
-# format = """
-# $cmd_duration$username$hostname $directory $git_branch
-# $character
-# """
 format = """
 $cmd_duration 󰜥 $directory $git_branch
 $character"""
@@ -53,7 +49,6 @@ deleted = " 🗑 "
 [hostname]
 ssh_only = false
 format =  "[•$hostname](bg:cyan bold fg:black)[](bold fg:cyan)"
-trim_at = ".companyname.com"
 disabled = false
 
 [line_break]
@@ -61,14 +56,9 @@ disabled = false
 
 [memory_usage]
 disabled = true
-threshold = -1
-symbol = " "
-style = "bold dimmed green"
 
 [time]
 disabled = true
-format = '🕙[\[ $time \]]($style) '
-time_format = "%T"
 
 [username]
 style_user = "bold bg:cyan fg:black"

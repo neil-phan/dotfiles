@@ -1,2 +1,4 @@
+# These are generated as real files by install.sh, not stow-managed symlinks.
 hyprlock/colors.conf
 hyprland/scale.conf
+hyprland/gpu.conf
