@@ -40,6 +40,7 @@ colors_dst="${HOME}/.config/hypr/hyprlock/colors.conf"
 sed "s|__HOME__|${HOME}|g" "${PWD}/hypr/hyprlock/colors.conf" > "${colors_dst}"
 
 gpu_dst="${HOME}/.config/hypr/hyprland/gpu.conf"
+[[ -L "${gpu_dst}" ]] && unlink "${gpu_dst}"
 if grep -qi nvidia <<< "$(lspci)"; then
     cat > "${gpu_dst}" <<'EOF'
 env = __GLX_VENDOR_LIBRARY_NAME,nvidia
@@ -68,5 +69,11 @@ sed "s|__HOME__|${HOME}|g" "${fg_template}" > "${fg_dir}/config.json"
 # file ~/.config/hypr/hyprland/monitors.conf that nwg-displays writes. Copying a
 # template over the stowed symlink wrote *through* it, corrupting the tracked
 # repo file and breaking the display (stale monitor name) — so that was removed.
+
+for machine_conf in monitors workspaces; do
+    machine_dst="${HOME}/.config/hypr/hyprland/${machine_conf}.conf"
+    [[ -L "${machine_dst}" ]] && unlink "${machine_dst}"
+    [[ -e "${machine_dst}" ]] || : > "${machine_dst}"
+done
 
 echo "Dotfiles installed!"
