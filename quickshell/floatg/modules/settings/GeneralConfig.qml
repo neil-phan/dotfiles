@@ -183,10 +183,10 @@ ContentPage {
             }
             ConfigSwitch {
                 buttonIcon: "av_timer"
-                text: Translation.tr("Pomodoro")
-                checked: Config.options.sounds.pomodoro
+                text: Translation.tr("Timer")
+                checked: Config.options.sounds.timer
                 onCheckedChanged: {
-                    Config.options.sounds.pomodoro = checked;
+                    Config.options.sounds.timer = checked;
                 }
             }
         }

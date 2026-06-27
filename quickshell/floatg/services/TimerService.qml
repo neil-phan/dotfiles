@@ -8,28 +8,17 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-/**
- * Simple Pomodoro time manager.
- */
 Singleton {
     id: root
 
-    property int focusTime: Persistent.states.timer.pomodoro.customFocus || Config.options.time.pomodoro.focus
-    property int breakTime: Persistent.states.timer.pomodoro.customBreak || Config.options.time.pomodoro.breakTime
-    property int longBreakTime: Config.options.time.pomodoro.longBreak
-    property int cyclesBeforeLongBreak: Config.options.time.pomodoro.cyclesBeforeLongBreak
+    property int countdownDuration: Persistent.states.timer.countdown.duration || Config.options.time.countdown.duration
+    property bool countdownRunning: Persistent.states.timer.countdown.running
+    property int countdownSecondsLeft: countdownDuration
 
-    property bool pomodoroRunning: Persistent.states.timer.pomodoro.running
-    property bool pomodoroBreak: Persistent.states.timer.pomodoro.isBreak
-    property bool pomodoroLongBreak: Persistent.states.timer.pomodoro.isBreak && (pomodoroCycle + 1 == cyclesBeforeLongBreak);
-    property int pomodoroLapDuration: pomodoroLongBreak ? longBreakTime : pomodoroBreak ? breakTime : focusTime // This is a binding that's to be kept
-    property int pomodoroSecondsLeft: pomodoroLapDuration // Reasonable init value, to be changed
-    property int pomodoroCycle: Persistent.states.timer.pomodoro.cycle
-
-    onPomodoroLapDurationChanged: {
-        if (!pomodoroRunning) {
-            pomodoroSecondsLeft = pomodoroLapDuration;
-            Persistent.states.timer.pomodoro.start = getCurrentTimeInSeconds();
+    onCountdownDurationChanged: {
+        if (!countdownRunning) {
+            countdownSecondsLeft = countdownDuration;
+            Persistent.states.timer.countdown.start = getCurrentTimeInSeconds();
         }
     }
 
@@ -44,7 +33,7 @@ Singleton {
             stopwatchReset();
     }
 
-    function getCurrentTimeInSeconds() {  // Pomodoro uses Seconds
+    function getCurrentTimeInSeconds() {
         return Math.floor(Date.now() / 1000);
     }
 
@@ -52,75 +41,42 @@ Singleton {
         return Math.floor(Date.now() / 10);
     }
 
-    // Pomodoro
-    function refreshPomodoro() {
-        // Work <-> break ?
-        if (getCurrentTimeInSeconds() >= Persistent.states.timer.pomodoro.start + pomodoroLapDuration) {
-            Persistent.states.timer.pomodoro.isBreak = !Persistent.states.timer.pomodoro.isBreak;
-            Persistent.states.timer.pomodoro.start = getCurrentTimeInSeconds();
-
-            // Read new state directly — bound props (pomodoroBreak, pomodoroLapDuration)
-            // haven't updated yet within the same JS call due to JsonObject deferred notifications
-            let isBreakNow = Persistent.states.timer.pomodoro.isBreak;
-            let newLapDuration = (isBreakNow && (pomodoroCycle + 1 == cyclesBeforeLongBreak))
-                ? longBreakTime : isBreakNow ? breakTime : focusTime;
-
-            let notificationMessage;
-            if (isBreakNow && (pomodoroCycle + 1 == cyclesBeforeLongBreak)) {
-                notificationMessage = Translation.tr(`🌿 Long break: %1 minutes`).arg(Math.floor(longBreakTime / 60));
-            } else if (isBreakNow) {
-                notificationMessage = Translation.tr(`☕ Break: %1 minutes`).arg(Math.floor(breakTime / 60));
-            } else {
-                notificationMessage = Translation.tr(`🔴 Focus: %1 minutes`).arg(Math.floor(focusTime / 60));
+    function refreshCountdown() {
+        const elapsed = getCurrentTimeInSeconds() - Persistent.states.timer.countdown.start;
+        countdownSecondsLeft = Math.max(0, countdownDuration - elapsed);
+        if (countdownSecondsLeft <= 0) {
+            Persistent.states.timer.countdown.running = false;
+            Quickshell.execDetached(["notify-send", "Timer", Translation.tr("⏰ Time's up!"), "-a", "Shell"]);
+            if (Config.options.sounds.timer) {
+                Audio.playSystemSound("alarm-clock-elapsed");
             }
-
-            Quickshell.execDetached(["notify-send", "Pomodoro", notificationMessage, "-a", "Shell"]);
-            if (Config.options.sounds.pomodoro) {
-                Audio.playSystemSound("alarm-clock-elapsed")
-            }
-
-            // Only increment cycle on break→focus transition
-            if (!isBreakNow) {
-                Persistent.states.timer.pomodoro.cycle = (Persistent.states.timer.pomodoro.cycle + 1) % root.cyclesBeforeLongBreak;
-            }
-
-            pomodoroSecondsLeft = newLapDuration; // start just reset, so elapsed = 0
-            return;
         }
-
-        pomodoroSecondsLeft = pomodoroLapDuration - (getCurrentTimeInSeconds() - Persistent.states.timer.pomodoro.start);
     }
 
     Timer {
-        id: pomodoroTimer
+        id: countdownTimer
         interval: 200
-        running: root.pomodoroRunning
+        running: root.countdownRunning
         repeat: true
-        onTriggered: refreshPomodoro()
+        onTriggered: refreshCountdown()
     }
 
-    function togglePomodoro() {
-        Persistent.states.timer.pomodoro.running = !pomodoroRunning;
-        if (Persistent.states.timer.pomodoro.running) {
-            // Start/Resume
-            Persistent.states.timer.pomodoro.start = getCurrentTimeInSeconds() + pomodoroSecondsLeft - pomodoroLapDuration;
+    function toggleCountdown() {
+        if (countdownSecondsLeft <= 0) return;
+        Persistent.states.timer.countdown.running = !countdownRunning;
+        if (Persistent.states.timer.countdown.running) {
+            Persistent.states.timer.countdown.start = getCurrentTimeInSeconds() - (countdownDuration - countdownSecondsLeft);
         }
     }
 
-    function resetPomodoro() {
-        Persistent.states.timer.pomodoro.running = false;
-        Persistent.states.timer.pomodoro.isBreak = false;
-        Persistent.states.timer.pomodoro.start = getCurrentTimeInSeconds();
-        Persistent.states.timer.pomodoro.cycle = 0;
-        refreshPomodoro();
+    function resetCountdown() {
+        Persistent.states.timer.countdown.running = false;
+        countdownSecondsLeft = countdownDuration;
+        Persistent.states.timer.countdown.start = getCurrentTimeInSeconds();
     }
 
-    function adjustFocusTime(delta) {
-        Persistent.states.timer.pomodoro.customFocus = Math.max(300, focusTime + delta);
-    }
-
-    function adjustBreakTime(delta) {
-        Persistent.states.timer.pomodoro.customBreak = Math.max(300, breakTime + delta);
+    function adjustCountdownDuration(delta) {
+        Persistent.states.timer.countdown.duration = Math.max(60, countdownDuration + delta);
     }
 
     // Stopwatch

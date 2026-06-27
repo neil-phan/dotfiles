@@ -1,0 +1,4 @@
+module qs.modules.floatg.sidebarRight.timer
+CountdownTimer 1.0 CountdownTimer.qml
+TimerWidget 1.0 TimerWidget.qml
+Stopwatch 1.0 Stopwatch.qml

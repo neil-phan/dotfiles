@@ -448,7 +448,7 @@ Singleton {
 
             property JsonObject sounds: JsonObject {
                 property bool battery: false
-                property bool pomodoro: false
+                property bool timer: false
                 property string theme: "freedesktop"
             }
 
@@ -458,11 +458,8 @@ Singleton {
                 property string shortDateFormat: "dd/MM"
                 property string dateWithYearFormat: "dd/MM/yyyy"
                 property string dateFormat: "ddd, dd/MM"
-                property JsonObject pomodoro: JsonObject {
-                    property int breakTime: 300
-                    property int cyclesBeforeLongBreak: 4
-                    property int focus: 1500
-                    property int longBreak: 900
+                property JsonObject countdown: JsonObject {
+                    property int duration: 300
                 }
                 property bool secondPrecision: false
             }

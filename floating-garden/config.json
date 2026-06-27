@@ -400,18 +400,15 @@
     },
     "sounds": {
         "battery": false,
-        "pomodoro": false,
+        "timer": false,
         "theme": "freedesktop"
     },
     "time": {
         "dateFormat": "ddd, MM/dd",
         "dateWithYearFormat": "MM/dd/yyyy",
         "format": "hh:mm AP",
-        "pomodoro": {
-            "breakTime": 300,
-            "cyclesBeforeLongBreak": 4,
-            "focus": 3300,
-            "longBreak": 900
+        "countdown": {
+            "duration": 300
         },
         "secondPrecision": false,
         "shortDateFormat": "MM/dd"

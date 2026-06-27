@@ -4,7 +4,7 @@ import qs.modules.common.widgets
 import qs.services
 import qs.modules.floatg.sidebarRight.calendar
 import qs.modules.floatg.sidebarRight.todo
-import qs.modules.floatg.sidebarRight.pomodoro
+import qs.modules.floatg.sidebarRight.timer
 import QtQuick
 import QtQuick.Layouts
 
@@ -34,7 +34,7 @@ Rectangle {
             "type": "timer",
             "name": Translation.tr("Timer"),
             "icon": "schedule",
-            "widget": "pomodoro/PomodoroWidget.qml"
+            "widget": "timer/TimerWidget.qml"
         },
     ]
 
