@@ -43,6 +43,31 @@ Singleton {
             return allowedPatterns.some(pattern => new RegExp(pattern).test(name));
         });
     }
+    function sinkDeviceKey(node) {
+        const name = String(node?.name ?? node?.id ?? "");
+        const cut = name.lastIndexOf(".");
+        return cut > 0 ? name.slice(0, cut) : name;
+    }
+    function cycleSinkGroups() {
+        const seen = {};
+        const groups = [];
+        root.cycleSinkDevices().forEach(node => {
+            const key = root.sinkDeviceKey(node);
+            if (seen[key] === undefined) {
+                seen[key] = groups.length;
+                groups.push({ key: key, nodes: [node] });
+            } else {
+                groups[seen[key]].nodes.push(node);
+            }
+        });
+        return groups;
+    }
+    function representativeSink(group) {
+        const active = group.nodes.find(node => node.id === root.sink?.id);
+        if (active) return active;
+        const primary = group.nodes.find(node => !/ #\d+$/.test(root.friendlyDeviceName(node)));
+        return primary ?? group.nodes[0];
+    }
 
     // Lists
     function correctType(node, isSink) {
@@ -99,8 +124,8 @@ Singleton {
 
     function cycleSink() {
         const allowedNames = root.configuredCycleSinkNames();
-        const devs = root.cycleSinkDevices();
-        if (allowedNames.length > 0 && devs.length === 0) {
+        const groups = root.cycleSinkGroups();
+        if (allowedNames.length > 0 && groups.length === 0) {
             Quickshell.execDetached([
                 "notify-send",
                 "Audio output",
@@ -112,13 +137,13 @@ Singleton {
             ]);
             return;
         }
-        if (devs.length === 0) return;
+        if (groups.length === 0) return;
 
-        const currentIndex = devs.findIndex(node => node.id === root.sink?.id);
-        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % devs.length;
-        const next = devs[nextIndex];
+        const currentIndex = groups.findIndex(group => group.nodes.some(node => node.id === root.sink?.id));
+        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % groups.length;
+        const next = root.representativeSink(groups[nextIndex]);
         root.setDefaultSink(next);
-        const name = root.friendlyDeviceName(next);
+        const name = root.friendlyDeviceName(next).replace(/ #\d+$/, "");
         Quickshell.execDetached(["notify-send", "Audio output", name, "-a", "Audio", "-t", "3000"]);
     }
 
