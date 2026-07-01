@@ -448,7 +448,7 @@ Singleton {
 
             property JsonObject sounds: JsonObject {
                 property bool battery: false
-                property bool timer: false
+                property bool timer: true
                 property string theme: "freedesktop"
             }
 
