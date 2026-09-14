@@ -137,6 +137,7 @@ Scope {
     function initIfReady() {
         if (!Config.ready || !Persistent.ready) return;
         if (Config.options.lock.launchOnStartup && Persistent.isNewHyprlandInstance) {
+            lockContext.fingerprintAllowed = false;
             root.lock();
         } else {
             KeyringStorage.fetchKeyringData();

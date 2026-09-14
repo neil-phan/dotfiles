@@ -20,6 +20,7 @@ Scope {
     property bool unlockInProgress: false
     property bool showFailure: false
     property bool fingerprintsConfigured: false
+    property bool fingerprintAllowed: true
     property var targetAction: LockContext.ActionEnum.Unlock
     property bool alsoInhibitIdle: false
 
@@ -47,7 +48,14 @@ Scope {
         interval: 10000
         onTriggered: {
             root.reset();
+            if (GlobalStates.screenLocked) root.tryFingerUnlock();
         }
+    }
+
+    Timer {
+        id: fingerRetryTimer
+        interval: 500
+        onTriggered: root.tryFingerUnlock()
     }
 
     onCurrentTextChanged: {
@@ -66,12 +74,13 @@ Scope {
     }
 
     function tryFingerUnlock() {
-        if (root.fingerprintsConfigured) {
+        if (root.fingerprintsConfigured && root.fingerprintAllowed) {
             fingerPam.start();
         }
     }
 
     function stopFingerPam() {
+        fingerRetryTimer.stop();
         if (fingerPam.running) {
             fingerPam.abort();
         }
@@ -108,6 +117,7 @@ Scope {
         // pam_unix won't send any important messages so all we need is the completion status.
         onCompleted: result => {
             if (result == PamResult.Success) {
+                root.fingerprintAllowed = true;
                 root.unlocked(root.targetAction);
                 stopFingerPam();
             } else {
@@ -129,8 +139,8 @@ Scope {
             if (result == PamResult.Success) {
                 root.unlocked(root.targetAction);
                 stopFingerPam();
-            } else if (result == PamResult.Error) { // if timeout or etc..
-                tryFingerUnlock()
+            } else if (GlobalStates.screenLocked) {
+                fingerRetryTimer.restart();
             }
         }
     }

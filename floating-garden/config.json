@@ -260,7 +260,7 @@
             "unlockKeyring": true
         },
         "showLockedText": true,
-        "useHyprlock": true
+        "useHyprlock": false
     },
     "media": {
         "filterDuplicatePlayers": true

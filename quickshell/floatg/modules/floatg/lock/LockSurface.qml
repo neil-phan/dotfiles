@@ -116,7 +116,7 @@ MouseArea {
             Layout.leftMargin: 10
             Layout.rightMargin: 6
             Layout.alignment: Qt.AlignVCenter
-            active: root.context.fingerprintsConfigured
+            active: root.context.fingerprintsConfigured && root.context.fingerprintAllowed
             visible: active
 
             sourceComponent: MaterialSymbol {
