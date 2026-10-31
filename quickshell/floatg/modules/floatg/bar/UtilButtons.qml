@@ -108,7 +108,7 @@ Item {
                 onClicked: event => {
                     const mode = Appearance.m3colors.darkmode ? "light" : "dark"
                     Appearance.m3colors.darkmode = !Appearance.m3colors.darkmode
-                    Hyprland.dispatch(`exec ${Directories.wallpaperSwitchScriptPath} --mode ${mode} --noswitch`);
+                    Quickshell.execDetached([Directories.wallpaperSwitchScriptPath, "--mode", mode, "--noswitch"]);
                 }
                 MaterialSymbol {
                     horizontalAlignment: Qt.AlignHCenter

@@ -20,36 +20,29 @@ LockScreen {
     // Push everything down
     property var windowData: []
     function saveWindowPositionAndTile() {
-        Quickshell.execDetached(["hyprctl", "keyword", "dwindle:pseudotile", "true"]);
         root.windowData = HyprlandData.windowList.filter(w => (w.floating && w.workspace.id === HyprlandData.activeWorkspace.id));
         root.windowData.forEach(w => {
-            Hyprland.dispatch(`pseudo address:${w.address}`);
-            Hyprland.dispatch(`settiled address:${w.address}`);
-            Hyprland.dispatch(`movetoworkspacesilent ${w.workspace.id},address:${w.address}`);
+            Hyprland.dispatch(`hl.dsp.window.pseudo({ window = "address:${w.address}" })`);
+            Hyprland.dispatch(`hl.dsp.window.float({ action = "disable", window = "address:${w.address}" })`);
+            Hyprland.dispatch(`hl.dsp.window.move({ workspace = ${w.workspace.id}, follow = false, window = "address:${w.address}" })`);
         });
     }
     function restoreWindowPositionAndTile() {
         root.windowData.forEach(w => {
-            Hyprland.dispatch(`setfloating address:${w.address}`);
-            Hyprland.dispatch(`movewindowpixel exact ${w.at[0]} ${w.at[1]}, address:${w.address}`);
-            Hyprland.dispatch(`pseudo address:${w.address}`);
+            Hyprland.dispatch(`hl.dsp.window.float({ action = "enable", window = "address:${w.address}" })`);
+            Hyprland.dispatch(`hl.dsp.window.move({ x = ${w.at[0]}, y = ${w.at[1]}, window = "address:${w.address}" })`);
+            Hyprland.dispatch(`hl.dsp.window.pseudo({ window = "address:${w.address}" })`);
         });
-        Quickshell.execDetached(["hyprctl", "keyword", "dwindle:pseudotile", "false"]);
     }
     Variants {
         model: Quickshell.screens
         delegate: Scope {
             required property ShellScreen modelData
             property bool shouldPush: GlobalStates.screenLocked
-            property string targetMonitorName: modelData.name
-            property int verticalMovementDistance: modelData.height
-            property int horizontalSqueeze: modelData.width * 0.2
             onShouldPushChanged: {
                 if (shouldPush) {
                     root.saveWindowPositionAndTile();
-                    Quickshell.execDetached(["bash", "-c", `hyprctl keyword monitor ${targetMonitorName}, addreserved, ${verticalMovementDistance}, ${-verticalMovementDistance}, ${horizontalSqueeze}, ${horizontalSqueeze}`]);
                 } else {
-                    Quickshell.execDetached(["bash", "-c", `hyprctl keyword monitor ${targetMonitorName}, addreserved, 0, 0, 0, 0`]);
                     root.restoreWindowPositionAndTile();
                 }
             }

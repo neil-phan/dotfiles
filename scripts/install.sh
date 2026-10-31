@@ -39,41 +39,29 @@ colors_dst="${HOME}/.config/hypr/hyprlock/colors.conf"
 [[ -L "${colors_dst}" ]] && unlink "${colors_dst}"
 sed "s|__HOME__|${HOME}|g" "${PWD}/hypr/hyprlock/colors.conf" > "${colors_dst}"
 
-gpu_dst="${HOME}/.config/hypr/hyprland/gpu.conf"
+gpu_dst="${HOME}/.config/hypr/hyprland/gpu.lua"
 [[ -L "${gpu_dst}" ]] && unlink "${gpu_dst}"
 if grep -qi nvidia <<< "$(lspci)"; then
     cat > "${gpu_dst}" <<'EOF'
-env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-env = LIBVA_DRIVER_NAME,nvidia
-env = NVD_BACKEND,direct
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("NVD_BACKEND", "direct")
 EOF
 else
     : > "${gpu_dst}"
 fi
 
-scale_dst="${HOME}/.config/hypr/hyprland/scale.conf"
+scale_dst="${HOME}/.config/hypr/hyprland/scale.lua"
 [[ -L "${scale_dst}" ]] && unlink "${scale_dst}"
-if [[ -f "${PWD}/templates/scale.conf.local" ]]; then
-    cp "${PWD}/templates/scale.conf.local" "${scale_dst}"
+if [[ -f "${PWD}/templates/scale.lua.local" ]]; then
+    cp "${PWD}/templates/scale.lua.local" "${scale_dst}"
 else
-    cp "${PWD}/hypr/hyprland/scale.conf" "${scale_dst}"
+    cp "${PWD}/hypr/hyprland/scale.lua" "${scale_dst}"
 fi
 
 fg_dir="${HOME}/.config/floating-garden"
 fg_template="${PWD}/floating-garden/config.json"
 mkdir -p "${fg_dir}"
 sed "s|__HOME__|${HOME}|g" "${fg_template}" > "${fg_dir}/config.json"
-
-# monitors.conf / workspaces.conf are intentionally NOT written here. They stay
-# stow-managed symlinks; monitors.conf delegates (source=) to the per-machine
-# file ~/.config/hypr/hyprland/monitors.conf that nwg-displays writes. Copying a
-# template over the stowed symlink wrote *through* it, corrupting the tracked
-# repo file and breaking the display (stale monitor name) — so that was removed.
-
-for machine_conf in monitors workspaces; do
-    machine_dst="${HOME}/.config/hypr/hyprland/${machine_conf}.conf"
-    [[ -L "${machine_dst}" ]] && unlink "${machine_dst}"
-    [[ -e "${machine_dst}" ]] || : > "${machine_dst}"
-done
 
 echo "Dotfiles installed!"

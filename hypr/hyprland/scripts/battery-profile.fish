@@ -14,11 +14,11 @@ function is_on_ac
 end
 
 function apply_battery
-    hyprctl --batch "keyword decoration:blur:passes 1 ; keyword decoration:blur:size 8 ; keyword decoration:shadow:enabled false ; keyword decoration:dim_inactive false" >/dev/null
+    hyprctl eval 'hl.config({ decoration = { blur = { passes = 1, size = 8 }, shadow = { enabled = false }, dim_inactive = false } })' >/dev/null
 end
 
 function apply_ac
-    hyprctl --batch "keyword decoration:blur:passes 3 ; keyword decoration:blur:size 15 ; keyword decoration:shadow:enabled true ; keyword decoration:dim_inactive true" >/dev/null
+    hyprctl eval 'hl.config({ decoration = { blur = { passes = 3, size = 15 }, shadow = { enabled = true }, dim_inactive = true } })' >/dev/null
 end
 
 function apply

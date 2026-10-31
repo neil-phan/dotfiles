@@ -2,3 +2,5 @@
 hyprlock/colors.conf
 hyprland/scale.conf
 hyprland/gpu.conf
+hyprland/scale.lua
+hyprland/gpu.lua
