@@ -34,11 +34,25 @@ Singleton {
             .map(name => root.normalizeName(name))
             .filter(name => name.length > 0);
     }
-    function cycleSinkDevices() {
+    function usableSinkNames(dump) {
+        const routesByDevice = {};
+        dump.filter(obj => obj.type === "PipeWire:Interface:Device").forEach(obj => {
+            routesByDevice[obj.id] = (obj.info?.params?.EnumRoute ?? []).filter(route => route.direction === "Output");
+        });
+        return dump.filter(obj => obj.info?.props?.["media.class"] === "Audio/Sink").filter(obj => {
+            const props = obj.info.props;
+            const deviceRoutes = routesByDevice[props["device.id"]] ?? [];
+            const routes = deviceRoutes.filter(route => route.devices?.includes(props["card.profile.device"]));
+            if (routes.length === 0) return true;
+            const jackSensing = deviceRoutes.some(route => route.available !== "unknown");
+            return routes.some(route => jackSensing ? route.available === "yes" : route.available !== "no");
+        }).map(obj => obj.info.props["node.name"]);
+    }
+    function cycleSinkDevices(usableNames) {
         const allowedPatterns = root.configuredCycleSinkNames();
-        if (allowedPatterns.length === 0) return root.outputDevices;
-
         return root.outputDevices.filter(node => {
+            if (!usableNames.includes(node.name)) return false;
+            if (allowedPatterns.length === 0) return true;
             const name = root.normalizeName(root.friendlyDeviceName(node));
             return allowedPatterns.some(pattern => new RegExp(pattern).test(name));
         });
@@ -48,10 +62,10 @@ Singleton {
         const cut = name.lastIndexOf(".");
         return cut > 0 ? name.slice(0, cut) : name;
     }
-    function cycleSinkGroups() {
+    function cycleSinkGroups(usableNames) {
         const seen = {};
         const groups = [];
-        root.cycleSinkDevices().forEach(node => {
+        root.cycleSinkDevices(usableNames).forEach(node => {
             const key = root.sinkDeviceKey(node);
             if (seen[key] === undefined) {
                 seen[key] = groups.length;
@@ -123,8 +137,12 @@ Singleton {
     }
 
     function cycleSink() {
+        if (!sinkRoutesProc.running) sinkRoutesProc.running = true;
+    }
+
+    function cycleSinkAmong(usableNames) {
         const allowedNames = root.configuredCycleSinkNames();
-        const groups = root.cycleSinkGroups();
+        const groups = root.cycleSinkGroups(usableNames);
         if (allowedNames.length > 0 && groups.length === 0) {
             Quickshell.execDetached([
                 "notify-send",
@@ -158,6 +176,15 @@ Singleton {
     }
 
     // Internals
+    Process {
+        id: sinkRoutesProc
+        command: ["pw-dump"]
+        stdout: StdioCollector {
+            id: sinkRoutesCollector
+            onStreamFinished: root.cycleSinkAmong(root.usableSinkNames(JSON.parse(sinkRoutesCollector.text || "[]")))
+        }
+    }
+
     PwObjectTracker {
         objects: [sink, source]
     }
